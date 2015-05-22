@@ -1,4 +1,4 @@
 import-style
 =========
 
->The gulp-cmd import-style plugin
+>The gulp-cmd plugin for embedding style text in JavaScript code

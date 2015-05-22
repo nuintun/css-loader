@@ -6,6 +6,8 @@
 
 var styleNode;
 var doc = document;
+var importsStack = '';
+var cssTextStack = '';
 var head = doc.getElementsByTagName('head')[0] || doc.documentElement;
 
 /**
@@ -51,22 +53,40 @@ function getNode(){
 }
 
 /**
+ * Insert style
+ */
+
+function insertStyle(){
+  var element = getNode();
+
+  // IE
+  if (element.styleSheet !== undefined) {
+    element.styleSheet.cssText = importsStack + cssTextStack;
+  }
+  // W3C
+  else {
+    var style = doc.createTextNode(importsStack + cssTextStack);
+
+    if (element.firstChild) {
+      element.replaceChild(style, element.firstChild);
+    } else {
+      element.appendChild(style);
+    }
+  }
+}
+
+/**
  * Insert import
  * @param imports
  */
 
 function imports(imports){
-  var element = getNode();
-
   imports = isString(imports) ? imports : '';
 
-  // IE
-  if (element.styleSheet !== undefined) {
-    element.styleSheet.cssText = imports + element.styleSheet.cssText;
-  }
-  // W3C
-  else {
-    element.insertBefore(doc.createTextNode(imports), element.firstChild);
+  if (imports) {
+    importsStack += imports;
+
+    insertStyle();
   }
 }
 
@@ -76,17 +96,12 @@ function imports(imports){
  */
 
 function cssText(cssText){
-  var element = getNode();
-
   cssText = isString(cssText) ? cssText : '';
 
-  // IE
-  if (element.styleSheet !== undefined) {
-    element.styleSheet.cssText += cssText;
-  }
-  // W3C
-  else {
-    element.appendChild(doc.createTextNode(cssText));
+  if (cssText) {
+    cssTextStack += cssText;
+
+    insertStyle();
   }
 }
 

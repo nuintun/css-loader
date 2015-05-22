@@ -18,11 +18,13 @@ function isString(value){
   return {}.toString.call(value) === "[object String]";
 }
 
-// Exports
-module.exports = function (cssText, imports){
-  var element;
+/**
+ * Get style node
+ * @returns {*}
+ */
 
-  imports = isString(imports) ? imports : '';
+function getNode(){
+  var element;
 
   // Don't share styleNode when id is spectied
   if (!styleNode) {
@@ -31,25 +33,63 @@ module.exports = function (cssText, imports){
     // Adds to DOM first to avoid the css hack invalid
     head.appendChild(element);
 
+    // IE
+    if (element.styleSheet !== undefined) {
+      // http://support.microsoft.com/kb/262161
+      if (doc.getElementsByTagName('style').length > 31) {
+        throw new Error('Exceed the maximal count of style tags in IE');
+      }
+    }
+
     // Cache style node
     styleNode = element;
   } else {
     element = styleNode;
   }
 
+  return element;
+}
+
+/**
+ * Insert import
+ * @param imports
+ */
+
+function imports(imports){
+  var element = getNode();
+
+  imports = isString(imports) ? imports : '';
+
   // IE
   if (element.styleSheet !== undefined) {
-
-    // http://support.microsoft.com/kb/262161
-    if (doc.getElementsByTagName('style').length > 31) {
-      throw new Error('Exceed the maximal count of style tags in IE');
-    }
-
-    element.styleSheet.cssText = imports + element.styleSheet.cssText + cssText;
+    element.styleSheet.cssText = imports + element.styleSheet.cssText;
   }
   // W3C
   else {
     element.insertBefore(doc.createTextNode(imports), element.firstChild);
+  }
+}
+
+/**
+ * Insert css text
+ * @param cssText
+ */
+
+function cssText(cssText){
+  var element = getNode();
+
+  cssText = isString(cssText) ? cssText : '';
+
+  // IE
+  if (element.styleSheet !== undefined) {
+    element.styleSheet.cssText += cssText;
+  }
+  // W3C
+  else {
     element.appendChild(doc.createTextNode(cssText));
   }
-};
+}
+
+// Exports
+module.exports.imports = imports;
+module.exports.cssText = cssText;

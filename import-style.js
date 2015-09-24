@@ -9,7 +9,7 @@ var doc = document;
 var head = doc.getElementsByTagName('head')[0] || doc.documentElement;
 
 /**
- * Is string
+ * is string
  * @param value
  * @returns {boolean}
  */
@@ -18,16 +18,16 @@ function isString(value){
 }
 
 /**
- * Create a style node
+ * create a style node
  * @returns {HTMLStyleElement}
  */
 function createStyle(){
   var node = doc.createElement('style');
 
-  // Set type
+  // set type
   node.type = 'text/css';
 
-  // IE
+  // ie
   if (node.styleSheet !== undefined) {
     // http://support.microsoft.com/kb/262161
     if (doc.getElementsByTagName('style').length > 31) {
@@ -35,33 +35,33 @@ function createStyle(){
     }
   }
 
-  // Adds to DOM first to avoid the css hack invalid
+  // adds to dom first to avoid the css hack invalid
   head.appendChild(node);
 
   return node;
 }
 
-// Declare variable
+// declare variable
 var textNode;
 var importNode;
 var textCahce = '';
 var importCahce = '';
 
 /**
- * Insert style
+ * insert style
  * @param node
  * @param css
  */
 function insertStyle(node, css){
-  // IE
+  // ie
   if (node.styleSheet !== undefined) {
     node.styleSheet.cssText = css;
   }
-  // W3C
+  // w3c
   else {
     css = doc.createTextNode(css);
 
-    // Insert text node
+    // insert text node
     if (node.firstChild) {
       node.replaceChild(css, node.firstChild);
     } else {
@@ -71,43 +71,43 @@ function insertStyle(node, css){
 }
 
 /**
- * Insert import
+ * insert import
  * @param css
  */
 function imports(css){
   if (css && isString(css)) {
-    // Cache css
+    // cache css
     importCahce += css;
 
-    // Create style node
+    // create style node
     if (!importNode) {
       importNode = createStyle();
     }
 
-    // Insert css
+    // insert css
     insertStyle(importNode, importCahce);
   }
 }
 
 /**
- * Insert css text
+ * insert css text
  * @param css
  */
 function cssText(css){
   if (css && isString(css)) {
-    // Cache css
+    // cache css
     textCahce += css;
 
-    // Create style node
+    // create style node
     if (!textNode) {
       textNode = createStyle();
     }
 
-    // Insert css
+    // insert css
     insertStyle(textNode, textCahce);
   }
 }
 
-// Exports
+// exports
 module.exports.imports = imports;
 module.exports.cssText = cssText;

@@ -42,10 +42,10 @@ function createStyle(){
 }
 
 // declare variable
-var textNode;
-var importNode;
-var textCahce = '';
-var importCahce = '';
+var cssNode;
+var linkNode;
+var cssCahce = '';
+var linkCahce = '';
 
 /**
  * insert style
@@ -71,43 +71,43 @@ function insertStyle(node, css){
 }
 
 /**
- * insert import
+ * insert css text
  * @param css
  */
-function imports(css){
+function css(css){
   if (css && isString(css)) {
     // cache css
-    importCahce += css;
+    cssCahce += css;
 
     // create style node
-    if (!importNode) {
-      importNode = createStyle();
+    if (!cssNode) {
+      cssNode = createStyle();
     }
 
     // insert css
-    insertStyle(importNode, importCahce);
+    insertStyle(cssNode, cssCahce);
   }
 }
 
 /**
- * insert css text
- * @param css
+ * insert import url
+ * @param link
  */
-function cssText(css){
-  if (css && isString(css)) {
+function link(link){
+  if (link && isString(link)) {
     // cache css
-    textCahce += css;
+    linkCahce += link;
 
     // create style node
-    if (!textNode) {
-      textNode = createStyle();
+    if (!linkNode) {
+      linkNode = createStyle();
     }
 
     // insert css
-    insertStyle(textNode, textCahce);
+    insertStyle(linkNode, linkCahce);
   }
 }
 
 // exports
-module.exports.imports = imports;
-module.exports.cssText = cssText;
+module.exports.css = css;
+module.exports.link = link;
